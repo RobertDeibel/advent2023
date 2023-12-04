@@ -15,11 +15,26 @@ pub fn run(args: Vec<String>) -> String {
 
     let result1: i32 = line_nums.iter().sum::<i32>();
 
-    for (line, indices) in (&lines).iter().zip(num_indices) {
-        let nums: Vec<i32> = writen_nums(line[0])
+    for (i, line) in (&lines).iter().enumerate() {
+        println!("line: {}", line);
+        let mut nums = written_nums(&line[0..=num_indices[i].0], true);
+        if nums.len() > 0 {
+            nums.sort_by(|a, b| a.1.cmp(&b.1));
+            println!("{}, {:?}, {}", &line[0..=num_indices[i].0], nums, line_nums[i]);
+            line_nums[i] = line_nums[i] % 10 + nums[0].0 * 10;
+        }
+
+        let mut nums = written_nums(&line[num_indices[i].1..=line.len() - 1], false);
+        if nums.len() > 0 {
+            nums.sort_by(|a, b| b.1.cmp(&a.1));
+            println!("{}, {:?}, {}", &line[num_indices[i].1..=line.len() - 1], nums, line_nums[i]);
+            line_nums[i] = (line_nums[i] / 10) * 10 + nums[0].0;
+        }
+        println!("final num {}", line_nums[i]);
+
     }
 
-let result2: i32 = 123;
+    let result2: i32 = line_nums.iter().sum();
 
     format!("Part 1: {:?}\nPart 2: {:?}", &result1, &result2)
 }
@@ -30,7 +45,7 @@ pub fn num_from_char(s: &char) -> Result<i32, num::ParseIntError> {
 
 pub fn nums_in_str(s: &str) -> (Vec<i32>, Vec<usize>) {
     let mut nums = Vec::new();
-    let mut indices: Vec<usize> = Vec::new();
+    let mut indices = Vec::new();
     for (i, char) in s.chars().enumerate() {
         let num = match num_from_char(&char) {
             Ok(num) => num,
@@ -43,11 +58,21 @@ pub fn nums_in_str(s: &str) -> (Vec<i32>, Vec<usize>) {
     (nums, indices)
 }
 
-pub fn writen_nums(s: &str) -> Vec<i32> {
-    const numbers: [&str; 9] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+pub fn written_nums(s: &str, left: bool) -> Vec<(i32, i32)> {
+    const NUMBERS: [&str; 9] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
-    let mut nums: Vec<i32> = Vec::new();
+    let mut nums: Vec<(i32, i32)> = Vec::new();
 
-    s.find(numbers);
+    let s = s.to_lowercase();
+    for (i, num) in NUMBERS.iter().enumerate() {
+        let find = if left {s.find(num)} else {s.rfind(num)};
+        let find = match find {
+            None => continue,
+            Some(num) => num,
+        };
+
+        nums.push((i as i32 + 1 , find as i32));
+    };
+
     nums
 }
