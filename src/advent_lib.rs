@@ -4,6 +4,7 @@ use std::io::BufRead;
 
 #[path = "days/day1.rs"] pub mod day1;
 #[path = "days/day2.rs"] pub mod day2;
+#[path = "days/day3.rs"] pub mod day3;
 
 /// Reads and returns lines from a file
 /// Args:
