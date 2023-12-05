@@ -16,7 +16,8 @@ fn main() {
     let result = match day {
         0 => panic!("Invalid day number"),
         1 => advent_lib::day1::run(day_args),
-        2..=u8::MAX => panic!("Invalid day number"),
+        2 => advent_lib::day2::run(day_args),
+        3..=u8::MAX => panic!("Invalid day number"),
     };
 
     println!("We have the result!!!");
