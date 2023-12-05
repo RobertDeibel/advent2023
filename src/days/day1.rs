@@ -1,4 +1,4 @@
-use std::num;
+use std::{num, result};
 
 pub fn run(args: Vec<String>) -> String {
     let lines = super::read_lines(&args[0]);
@@ -16,21 +16,17 @@ pub fn run(args: Vec<String>) -> String {
     let result1: i32 = line_nums.iter().sum::<i32>();
 
     for (i, line) in (&lines).iter().enumerate() {
-        println!("line: {}", line);
-        let mut nums = written_nums(&line[0..=num_indices[i].0], true);
+        let mut nums = written_nums(&line[..num_indices[i].0], true);
         if nums.len() > 0 {
             nums.sort_by(|a, b| a.1.cmp(&b.1));
-            println!("{}, {:?}, {}", &line[0..=num_indices[i].0], nums, line_nums[i]);
             line_nums[i] = line_nums[i] % 10 + nums[0].0 * 10;
         }
 
-        let mut nums = written_nums(&line[num_indices[i].1..=line.len() - 1], false);
+        let mut nums = written_nums(&line[num_indices[i].1..], false);
         if nums.len() > 0 {
             nums.sort_by(|a, b| b.1.cmp(&a.1));
-            println!("{}, {:?}, {}", &line[num_indices[i].1..=line.len() - 1], nums, line_nums[i]);
             line_nums[i] = (line_nums[i] / 10) * 10 + nums[0].0;
         }
-        println!("final num {}", line_nums[i]);
 
     }
 
@@ -61,18 +57,32 @@ pub fn nums_in_str(s: &str) -> (Vec<i32>, Vec<usize>) {
 pub fn written_nums(s: &str, left: bool) -> Vec<(i32, i32)> {
     const NUMBERS: [&str; 9] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
-    let mut nums: Vec<(i32, i32)> = Vec::new();
+    let mut nums = Vec::new();
 
-    let s = s.to_lowercase();
-    for (i, num) in NUMBERS.iter().enumerate() {
-        let find = if left {s.find(num)} else {s.rfind(num)};
-        let find = match find {
-            None => continue,
-            Some(num) => num,
-        };
-
-        nums.push((i as i32 + 1 , find as i32));
-    };
+    for (s, idx) in find_indices(s, &NUMBERS, left) {
+        for (i, num) in (&NUMBERS).iter().enumerate() {
+            if s == *num {
+                nums.push((i  as i32 + 1, idx))
+            }
+        }
+    }
 
     nums
+}
+
+pub fn find_indices<'a>(s: &str, reference: &[&'a str], left: bool) -> Vec<(&'a str, i32)> {
+    let mut result: Vec<(&str, i32)> = Vec::new();
+
+    let s = s.to_lowercase();
+    for r in reference.iter() {
+        let find = if left {s.find(r)} else {s.rfind(r)};
+        let find = match find {
+            None => continue,
+            Some(r) => r,
+        };
+
+        result.push((r, find as i32));
+    };
+
+    result
 }
