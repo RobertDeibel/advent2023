@@ -25,8 +25,14 @@ pub fn make_output(results: &[String]) -> String {
         if !output.is_empty(){
             output += "\n";
         }
-        output += &format!("part {i}: {}", result);
+        output += &format!("part {}: {}", i + 1, result);
     }
 
     output
+}
+
+pub fn debug_msg(s: &str, args: &Vec<String>) {
+    if args[args.len() -1] == "debug" {
+        println!("{}", s)
+    }
 }
