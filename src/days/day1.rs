@@ -1,4 +1,4 @@
-use std::{num, result};
+use std::num;
 
 pub fn run(args: Vec<String>) -> String {
     let lines = super::read_lines(&args[0]);
