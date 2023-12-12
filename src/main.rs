@@ -18,7 +18,8 @@ fn main() {
         1 => advent_lib::day1::run(day_args),
         2 => advent_lib::day2::run(day_args),
         3 => advent_lib::day3::run(day_args),
-        4..=u8::MAX => panic!("Invalid day number"),
+        4 => advent_lib::day4::run(day_args),
+        5..=u8::MAX => panic!("Invalid day number"),
     };
 
     println!("We have the result!!!");
